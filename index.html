@@ -158,26 +158,31 @@
 
   <div class="wrap">
     <div class="card">
-      <p class="intro">
-        ¡Hola! Completá tus datos y marcá todos los días y horarios en los que podrías venir a clase.
-        Cuanta más disponibilidad marques, más fácil es encontrarte un lugar.
-      </p>
+      <div id="contenido">
+        <p class="intro">
+          ¡Hola! Completá tus datos y marcá todos los días y horarios en los que podrías venir a clase.
+          Cuanta más disponibilidad marques, más fácil es encontrarte un lugar.
+        </p>
 
-      <label class="field-label" for="nombre">Nombre y Apellido</label>
-      <input type="text" id="nombre" placeholder="Ej: Juan Pérez" autocomplete="name" />
+        <label class="field-label" for="nombre">Nombre y Apellido</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan Pérez" autocomplete="name" />
 
-      <label class="field-label" for="celular">Celular (WhatsApp)</label>
-      <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" />
-      <p class="hint">Con tu código de área, sin 0 ni 15.</p>
+        <label class="field-label" for="celular">Celular (WhatsApp)</label>
+        <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" />
+        <p class="hint">Con tu código de área, sin 0 ni 15.</p>
 
-      <label class="field-label">Disponibilidad — marcá todos los horarios que puedas</label>
-      <div id="dias"></div>
+        <label class="field-label">¿Qué tipo de clase buscás? — podés marcar varias</label>
+        <div class="hours" id="tipos" style="margin-bottom: 14px;"></div>
 
-      <div class="summary" id="resumen">Todavía no marcaste ningún horario.</div>
-      <div class="error" id="error"></div>
+        <label class="field-label">Disponibilidad — marcá todos los horarios que puedas</label>
+        <div id="dias"></div>
 
-      <button class="btn btn-primary" id="enviar">Enviar inscripción</button>
-      <button class="btn btn-ghost" id="copiar">O copiá tus datos para mandarlos vos</button>
+        <div class="summary" id="resumen">Todavía no marcaste ningún horario.</div>
+        <div class="error" id="error"></div>
+
+        <button class="btn btn-primary" id="enviar">Enviar inscripción</button>
+        <button class="btn btn-ghost" id="copiar">O copiá tus datos para mandarlos vos</button>
+      </div>
 
       <div class="done" id="done">
         <div class="big">✅</div>
@@ -209,6 +214,23 @@
     ];
 
     var seleccion = {}; // { "Lunes": [8, 9], ... }
+
+    // Tipo de clase que busca (multirespuesta)
+    var TIPOS_CLASE = ["Individual", "Doble", "Grupal"];
+    var tiposSeleccionados = [];
+    var contTipos = document.getElementById("tipos");
+    TIPOS_CLASE.forEach(function (t) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "hour-chip";
+      chip.textContent = t;
+      chip.onclick = function () {
+        var i = tiposSeleccionados.indexOf(t);
+        if (i >= 0) { tiposSeleccionados.splice(i, 1); chip.classList.remove("on"); }
+        else { tiposSeleccionados.push(t); chip.classList.add("on"); }
+      };
+      contTipos.appendChild(chip);
+    });
 
     var cont = document.getElementById("dias");
     DIAS.forEach(function (d) {
@@ -285,6 +307,7 @@
       var celular = document.getElementById("celular").value.trim();
       if (!nombre) { mostrarError("Poné tu nombre y apellido."); return null; }
       if (!celular) { mostrarError("Poné tu número de celular."); return null; }
+      if (tiposSeleccionados.length === 0) { mostrarError("Marcá qué tipo de clase buscás (podés elegir varias)."); return null; }
       if (totalMarcados() === 0) { mostrarError("Marcá al menos un horario en el que puedas venir."); return null; }
 
       var disponibilidad = {};
@@ -294,19 +317,22 @@
 
       // Código para importar automáticamente en el CRM (Lista de Espera · Alumnos)
       var codigo = "PTC1:" + btoa(unescape(encodeURIComponent(JSON.stringify({
-        n: nombre, t: celular, d: disponibilidad
+        n: nombre, t: celular, c: tiposSeleccionados, d: disponibilidad
       }))));
 
       var mensaje = "Hola! Quiero anotarme en la lista de espera de clases de padel.\n"
         + "Nombre: " + nombre + "\n"
         + "Celular: " + celular + "\n"
+        + "Tipo de clase: " + tiposSeleccionados.join(", ") + "\n"
         + "Disponibilidad:\n- " + resumenTexto().join("\n- ")
         + "\n\nCodigo de inscripcion (no lo borres):\n" + codigo;
 
-      return { nombre: nombre, celular: celular, disponibilidad: disponibilidad, mensaje: mensaje };
+      return { nombre: nombre, celular: celular, tipos: tiposSeleccionados.slice(), disponibilidad: disponibilidad, mensaje: mensaje };
     }
 
     function mostrarListo(texto) {
+      // se oculta todo el formulario y queda solo la confirmación
+      document.getElementById("contenido").style.display = "none";
       document.getElementById("done-text").textContent = texto;
       document.getElementById("done").className = "done show";
     }
@@ -338,7 +364,7 @@
           "Authorization": "Bearer " + SUPA_KEY,
           "Prefer": "return=minimal"
         },
-        body: JSON.stringify({ nombre: datos.nombre, celular: datos.celular, disponibilidad: datos.disponibilidad }),
+        body: JSON.stringify({ nombre: datos.nombre, celular: datos.celular, tipos: datos.tipos, disponibilidad: datos.disponibilidad }),
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         mostrarListo("¡Listo! Tu inscripción fue enviada. Te contactamos apenas haya lugar.");
