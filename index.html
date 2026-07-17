@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancha Uno — Inscripción a clases de pádel</title>
+  <style>
+    :root {
+      --court: #1B4F3C;
+      --court-light: #2F6B4F;
+      --court-soft: #E7EFE9;
+      --clay: #C2703F;
+      --sand: #F6F2E9;
+      --paper: #FFFFFF;
+      --ink: #22271F;
+      --slate: #6E7A6F;
+      --line: #DAD9C9;
+      --warn: #C24B3A;
+      --warn-soft: #F7E2DD;
+      --ok: #2F7A4F;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--sand);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--court);
+      color: #fff;
+      border-bottom: 4px solid var(--clay);
+      padding: 22px 18px;
+      text-align: center;
+    }
+    .header h1 { font-size: 22px; letter-spacing: 0.3px; }
+    .header p {
+      font-size: 12px; color: #C9D8CE;
+      text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 20px 16px 60px; }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+    }
+    .intro { font-size: 13.5px; color: var(--slate); line-height: 1.5; margin-bottom: 14px; }
+    label.field-label {
+      display: block;
+      font-size: 11.5px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 15px;
+      font-family: inherit;
+      margin-bottom: 14px;
+      background: var(--paper);
+    }
+    input:focus { outline: 2px solid var(--court-light); border-color: transparent; }
+    .hint { font-size: 12px; color: var(--slate); margin: -8px 0 14px; }
+    .day-block { margin-bottom: 14px; }
+    .day-name {
+      font-size: 13px; font-weight: 800; color: var(--court);
+      margin-bottom: 7px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .day-count {
+      font-size: 10.5px; font-weight: 800; color: #fff;
+      background: var(--court);
+      border-radius: 999px;
+      padding: 1px 8px;
+      display: none;
+    }
+    .day-count.show { display: inline-block; }
+    .hours { display: flex; flex-wrap: wrap; gap: 7px; }
+    .hour-chip {
+      border: 1.5px solid var(--line);
+      background: var(--paper);
+      color: var(--slate);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hour-chip.on {
+      background: var(--court);
+      border-color: var(--court);
+      color: #fff;
+    }
+    .summary {
+      font-size: 12.5px; color: var(--slate);
+      background: var(--court-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .error {
+      display: none;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 13px; font-weight: 700;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .error.show { display: block; }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: inherit;
+      padding: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-primary { background: var(--court); color: #fff; }
+    .btn-primary:active { background: var(--court-light); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--court);
+      border: 1.5px dashed var(--line);
+      margin-top: 10px;
+      font-size: 13.5px;
+      padding: 11px;
+    }
+    .done {
+      display: none;
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+    .done.show { display: block; }
+    .done .big { font-size: 38px; }
+    .done p { font-size: 14px; color: var(--slate); margin-top: 8px; line-height: 1.5; }
+    .footer { text-align: center; font-size: 11.5px; color: var(--slate); margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎾 Cancha Uno</h1>
+    <p>Inscripción a clases de pádel</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <p class="intro">
+        ¡Hola! Completá tus datos y marcá todos los días y horarios en los que podrías venir a clase.
+        Cuanta más disponibilidad marques, más fácil es encontrarte un lugar.
+      </p>
+
+      <label class="field-label" for="nombre">Nombre y Apellido</label>
+      <input type="text" id="nombre" placeholder="Ej: Juan Pérez" autocomplete="name" />
+
+      <label class="field-label" for="celular">Celular (WhatsApp)</label>
+      <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" />
+      <p class="hint">Con tu código de área, sin 0 ni 15.</p>
+
+      <label class="field-label">Disponibilidad — marcá todos los horarios que puedas</label>
+      <div id="dias"></div>
+
+      <div class="summary" id="resumen">Todavía no marcaste ningún horario.</div>
+      <div class="error" id="error"></div>
+
+      <button class="btn btn-primary" id="enviar">Enviar inscripción</button>
+      <button class="btn btn-ghost" id="copiar">O copiá tus datos para mandarlos vos</button>
+
+      <div class="done" id="done">
+        <div class="big">✅</div>
+        <p id="done-text">¡Listo! Se abrió WhatsApp con tu inscripción. Mandá el mensaje tal como está y te contactamos apenas haya lugar.</p>
+      </div>
+    </div>
+
+    <p class="footer">Cancha Uno · Administración de clases</p>
+  </div>
+
+  <script>
+    // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
+    var TELEFONO_PROFE = "5491100000000";
+
+    // ⚠️ Si publicás el backend (server/index.js), poné acá su URL pública,
+    // por ejemplo: "https://cancha-uno.onrender.com". Si queda vacío, el
+    // formulario intenta el mismo dominio y, si no hay backend, usa WhatsApp.
+    var BACKEND_URL = "";
+
+    // Días y horarios de clase: Lunes a Viernes de 7 a 17hs, Sábados de 8 a 11hs.
+    // Cada número es la hora de inicio de la clase (16 = clase de 16:00 a 17:00).
+    var DIAS = [
+      { dia: "Lunes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
+      { dia: "Martes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
+      { dia: "Miércoles", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
+      { dia: "Jueves", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
+      { dia: "Viernes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
+      { dia: "Sábado", horas: [8, 9, 10] },
+    ];
+
+    var seleccion = {}; // { "Lunes": [8, 9], ... }
+
+    var cont = document.getElementById("dias");
+    DIAS.forEach(function (d) {
+      seleccion[d.dia] = [];
+      var block = document.createElement("div");
+      block.className = "day-block";
+      var name = document.createElement("div");
+      name.className = "day-name";
+      name.textContent = d.dia;
+      var count = document.createElement("span");
+      count.className = "day-count";
+      count.id = "count-" + d.dia;
+      name.appendChild(count);
+      block.appendChild(name);
+      var hours = document.createElement("div");
+      hours.className = "hours";
+      d.horas.forEach(function (h) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "hour-chip";
+        chip.textContent = h + ":00";
+        chip.onclick = function () {
+          var arr = seleccion[d.dia];
+          var i = arr.indexOf(h);
+          if (i >= 0) { arr.splice(i, 1); chip.classList.remove("on"); }
+          else { arr.push(h); arr.sort(function (a, b) { return a - b; }); chip.classList.add("on"); }
+          actualizar();
+        };
+        hours.appendChild(chip);
+      });
+      block.appendChild(hours);
+      cont.appendChild(block);
+    });
+
+    function totalMarcados() {
+      return DIAS.reduce(function (t, d) { return t + seleccion[d.dia].length; }, 0);
+    }
+
+    function resumenTexto() {
+      var partes = [];
+      DIAS.forEach(function (d) {
+        if (seleccion[d.dia].length > 0) {
+          partes.push(d.dia + ": " + seleccion[d.dia].map(function (h) { return h + ":00"; }).join(", "));
+        }
+      });
+      return partes;
+    }
+
+    function actualizar() {
+      DIAS.forEach(function (d) {
+        var c = document.getElementById("count-" + d.dia);
+        var n = seleccion[d.dia].length;
+        c.textContent = n;
+        c.className = "day-count" + (n > 0 ? " show" : "");
+      });
+      var partes = resumenTexto();
+      document.getElementById("resumen").innerHTML = partes.length === 0
+        ? "Todavía no marcaste ningún horario."
+        : "<strong>Tu disponibilidad:</strong><br>" + partes.join("<br>");
+    }
+
+    function mostrarError(msg) {
+      var e = document.getElementById("error");
+      e.textContent = msg;
+      e.className = "error show";
+    }
+    function limpiarError() {
+      document.getElementById("error").className = "error";
+    }
+
+    function armarDatos() {
+      limpiarError();
+      var nombre = document.getElementById("nombre").value.trim();
+      var celular = document.getElementById("celular").value.trim();
+      if (!nombre) { mostrarError("Poné tu nombre y apellido."); return null; }
+      if (!celular) { mostrarError("Poné tu número de celular."); return null; }
+      if (totalMarcados() === 0) { mostrarError("Marcá al menos un horario en el que puedas venir."); return null; }
+
+      var disponibilidad = {};
+      DIAS.forEach(function (d) {
+        if (seleccion[d.dia].length > 0) disponibilidad[d.dia] = seleccion[d.dia];
+      });
+
+      // Código para importar automáticamente en el CRM (Lista de Espera · Alumnos)
+      var codigo = "PTC1:" + btoa(unescape(encodeURIComponent(JSON.stringify({
+        n: nombre, t: celular, d: disponibilidad
+      }))));
+
+      var mensaje = "Hola! Quiero anotarme en la lista de espera de clases de padel.\n"
+        + "Nombre: " + nombre + "\n"
+        + "Celular: " + celular + "\n"
+        + "Disponibilidad:\n- " + resumenTexto().join("\n- ")
+        + "\n\nCodigo de inscripcion (no lo borres):\n" + codigo;
+
+      return { nombre: nombre, celular: celular, disponibilidad: disponibilidad, mensaje: mensaje };
+    }
+
+    function mostrarListo(texto) {
+      document.getElementById("done-text").textContent = texto;
+      document.getElementById("done").className = "done show";
+    }
+
+    function enviarPorWhatsApp(datos) {
+      // si el número del profe todavía no está configurado, no abrimos un chat equivocado
+      if (!TELEFONO_PROFE || TELEFONO_PROFE === "5491100000000") {
+        copiarFallback(datos.mensaje);
+        mostrarListo("¡Datos copiados! Pegalos en un WhatsApp al profe y te contactamos apenas haya lugar.");
+        return;
+      }
+      window.open("https://wa.me/" + TELEFONO_PROFE + "?text=" + encodeURIComponent(datos.mensaje), "_blank");
+      mostrarListo("¡Listo! Se abrió WhatsApp con tu inscripción. Mandá el mensaje tal como está y te contactamos apenas haya lugar.");
+    }
+
+    document.getElementById("enviar").onclick = function () {
+      var datos = armarDatos();
+      if (!datos) return;
+      // Primero intentamos mandar la inscripción directo al sistema;
+      // si el backend no está disponible, cae al circuito de WhatsApp.
+      var boton = document.getElementById("enviar");
+      boton.disabled = true;
+      boton.textContent = "Enviando…";
+      fetch((BACKEND_URL || "") + "/api/inscripcion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre: datos.nombre, celular: datos.celular, disponibilidad: datos.disponibilidad }),
+      }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        mostrarListo("¡Listo! Tu inscripción fue enviada. Te contactamos apenas haya lugar.");
+      }).catch(function () {
+        enviarPorWhatsApp(datos);
+      }).finally(function () {
+        boton.disabled = false;
+        boton.textContent = "Enviar inscripción";
+      });
+    };
+
+    document.getElementById("copiar").onclick = function () {
+      var datos = armarDatos();
+      if (!datos) return;
+      var mensaje = datos.mensaje;
+      var fin = function () {
+        document.getElementById("done-text").textContent =
+          "¡Datos copiados! Pegalos en un WhatsApp al profe y te contactamos apenas haya lugar.";
+        document.getElementById("done").className = "done show";
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(mensaje).then(fin, function () { copiarFallback(mensaje); fin(); });
+      } else {
+        copiarFallback(mensaje);
+        fin();
+      }
+    };
+
+    function copiarFallback(texto) {
+      var ta = document.createElement("textarea");
+      ta.value = texto;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+  </script>
+</body>
+</html>
