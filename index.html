@@ -192,10 +192,10 @@
     // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
     var TELEFONO_PROFE = "5491100000000";
 
-    // ⚠️ Si publicás el backend (server/index.js), poné acá su URL pública,
-    // por ejemplo: "https://cancha-uno.onrender.com". Si queda vacío, el
-    // formulario intenta el mismo dominio y, si no hay backend, usa WhatsApp.
-    var BACKEND_URL = "";
+    // Base de datos en la nube (Supabase). La anon key es pública por diseño:
+    // solo permite ENVIAR inscripciones, no leer ni tocar ningún dato.
+    var SUPA_URL = "https://yhmtbvkpjadsvcdziegx.supabase.co";
+    var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4";
 
     // Días y horarios de clase: Lunes a Viernes de 7 a 17hs, Sábados de 8 a 11hs.
     // Cada número es la hora de inicio de la clase (16 = clase de 16:00 a 17:00).
@@ -325,14 +325,19 @@
     document.getElementById("enviar").onclick = function () {
       var datos = armarDatos();
       if (!datos) return;
-      // Primero intentamos mandar la inscripción directo al sistema;
-      // si el backend no está disponible, cae al circuito de WhatsApp.
+      // La inscripción va directo a la base de datos;
+      // si por algún motivo falla, cae al circuito de WhatsApp.
       var boton = document.getElementById("enviar");
       boton.disabled = true;
       boton.textContent = "Enviando…";
-      fetch((BACKEND_URL || "") + "/api/inscripcion", {
+      fetch(SUPA_URL + "/rest/v1/inscripciones", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPA_KEY,
+          "Authorization": "Bearer " + SUPA_KEY,
+          "Prefer": "return=minimal"
+        },
         body: JSON.stringify({ nombre: datos.nombre, celular: datos.celular, disponibilidad: datos.disponibilidad }),
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
