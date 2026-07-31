@@ -196,6 +196,9 @@
         <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" />
         <p class="hint">Con tu código de área, sin 0 ni 15.</p>
 
+        <label class="field-label">Sexo</label>
+        <div class="hours" id="sexo" style="margin-bottom: 14px;"></div>
+
         <label class="field-label">Experiencia con pádel</label>
         <div class="opts" id="experiencia"></div>
         <div class="sub-input" id="categoria-wrap">
@@ -245,6 +248,23 @@
     ];
 
     var seleccion = {}; // { "Lunes": [8, 9], ... }
+
+    // Sexo (respuesta única)
+    var SEXOS = ["Masculino", "Femenino"];
+    var sexoSeleccionado = "";
+    var contSexo = document.getElementById("sexo");
+    SEXOS.forEach(function (op) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "hour-chip";
+      chip.textContent = op;
+      chip.onclick = function () {
+        sexoSeleccionado = op;
+        Array.prototype.forEach.call(contSexo.children, function (c) { c.classList.remove("on"); });
+        chip.classList.add("on");
+      };
+      contSexo.appendChild(chip);
+    });
 
     // Experiencia con pádel (respuesta única)
     var EXPERIENCIAS = [
@@ -366,6 +386,7 @@
       var categoria = document.getElementById("categoria").value.trim();
       if (!nombre) { mostrarError("Poné tu nombre y apellido."); return null; }
       if (!celular) { mostrarError("Poné tu número de celular."); return null; }
+      if (!sexoSeleccionado) { mostrarError("Marcá tu sexo."); return null; }
       if (!experienciaSeleccionada) { mostrarError("Contanos tu experiencia con el pádel."); return null; }
       if (experienciaSeleccionada === EXPERIENCIA_CON_CATEGORIA) {
         var num = parseInt(categoria, 10);
@@ -387,12 +408,13 @@
       // Código para importar automáticamente en el CRM (Lista de Espera · Alumnos)
       var codigo = "PTC1:" + btoa(unescape(encodeURIComponent(JSON.stringify({
         n: nombre, t: celular, c: tiposSeleccionados, d: disponibilidad,
-        e: experienciaSeleccionada, g: categoria
+        e: experienciaSeleccionada, g: categoria, x: sexoSeleccionado
       }))));
 
       var mensaje = "Hola! Quiero anotarme en la lista de espera de clases de padel.\n"
         + "Nombre: " + nombre + "\n"
         + "Celular: " + celular + "\n"
+        + "Sexo: " + sexoSeleccionado + "\n"
         + "Experiencia: " + experienciaTexto + "\n"
         + "Tipo de clase: " + tiposSeleccionados.join(", ") + "\n"
         + "Disponibilidad:\n- " + resumenTexto().join("\n- ")
@@ -401,7 +423,7 @@
       return {
         nombre: nombre, celular: celular, tipos: tiposSeleccionados.slice(),
         disponibilidad: disponibilidad, experiencia: experienciaSeleccionada,
-        categoria: categoria, mensaje: mensaje
+        categoria: categoria, sexo: sexoSeleccionado, mensaje: mensaje
       };
     }
 
@@ -443,7 +465,8 @@
           seccion: "Alumnos",
           nombre: datos.nombre, celular: datos.celular, tipos: datos.tipos,
           disponibilidad: datos.disponibilidad,
-          experiencia: datos.experiencia, categoria: datos.categoria
+          experiencia: datos.experiencia, categoria: datos.categoria,
+          sexo: datos.sexo
         }),
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
