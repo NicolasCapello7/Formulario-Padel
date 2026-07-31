@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cancha Uno — Inscripción a clases de pádel</title>
+  <title>Cancha Uno — Solicitud de Abono</title>
   <style>
     :root {
       --court: #1B4F3C;
@@ -108,31 +108,6 @@
       margin-bottom: 14px;
       line-height: 1.5;
     }
-    /* Opciones de respuesta única, una debajo de la otra (textos largos) */
-    .opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-    .opt-chip {
-      width: 100%;
-      text-align: left;
-      border: 1.5px solid var(--line);
-      background: var(--paper);
-      color: var(--ink);
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.12s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .opt-chip.on {
-      background: var(--court);
-      border-color: var(--court);
-      color: #fff;
-      font-weight: 800;
-    }
-    .sub-input { display: none; margin: -6px 0 14px; }
-    .sub-input.show { display: block; }
     .error {
       display: none;
       background: var(--warn-soft);
@@ -178,15 +153,15 @@
 <body>
   <div class="header">
     <h1>🎾 Cancha Uno</h1>
-    <p>Inscripción a clases de pádel</p>
+    <p>Solicitud de Abono</p>
   </div>
 
   <div class="wrap">
     <div class="card">
       <div id="contenido">
         <p class="intro">
-          ¡Hola! Completá tus datos y marcá todos los días y horarios en los que podrías venir a clase.
-          Cuanta más disponibilidad marques, más fácil es encontrarte un lugar.
+          ¡Hola! Completá tus datos y marcá todos los días y horarios que te sirven para tu abono.
+          Cuantas más opciones marques, más fácil es encontrarte un lugar.
         </p>
 
         <label class="field-label" for="nombre">Nombre y Apellido</label>
@@ -196,28 +171,19 @@
         <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" />
         <p class="hint">Con tu código de área, sin 0 ni 15.</p>
 
-        <label class="field-label">Experiencia con pádel</label>
-        <div class="opts" id="experiencia"></div>
-        <div class="sub-input" id="categoria-wrap">
-          <input type="number" id="categoria" min="4" max="9" placeholder="¿Qué categoría? (4 a 9)" />
-        </div>
-
-        <label class="field-label">¿Qué tipo de clase buscás? — podés marcar varias</label>
-        <div class="hours" id="tipos" style="margin-bottom: 14px;"></div>
-
-        <label class="field-label">Disponibilidad — marcá todos los horarios que puedas</label>
+        <label class="field-label">Días y horarios buscados — marcá todos los que te sirvan</label>
         <div id="dias"></div>
 
         <div class="summary" id="resumen">Todavía no marcaste ningún horario.</div>
         <div class="error" id="error"></div>
 
-        <button class="btn btn-primary" id="enviar">Enviar inscripción</button>
+        <button class="btn btn-primary" id="enviar">Enviar solicitud</button>
         <button class="btn btn-ghost" id="copiar">O copiá tus datos para mandarlos vos</button>
       </div>
 
       <div class="done" id="done">
         <div class="big">✅</div>
-        <p id="done-text">¡Listo! Se abrió WhatsApp con tu inscripción. Mandá el mensaje tal como está y te contactamos apenas haya lugar.</p>
+        <p id="done-text">¡Listo! Tu solicitud fue enviada. Te contactamos apenas haya lugar.</p>
       </div>
     </div>
 
@@ -233,62 +199,18 @@
     var SUPA_URL = "https://yhmtbvkpjadsvcdziegx.supabase.co";
     var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4";
 
-    // Días y horarios de clase: Lunes a Viernes de 7 a 17hs, Sábados de 8 a 11hs.
-    // Cada número es la hora de inicio de la clase (16 = clase de 16:00 a 17:00).
+    // Días y horarios de los abonos
     var DIAS = [
-      { dia: "Lunes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
-      { dia: "Martes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
-      { dia: "Miércoles", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
-      { dia: "Jueves", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
-      { dia: "Viernes", horas: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] },
-      { dia: "Sábado", horas: [8, 9, 10] },
+      { dia: "Lunes", horas: ["18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Martes", horas: ["17:00", "18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Miércoles", horas: ["17:00", "18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Jueves", horas: ["17:00", "18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Viernes", horas: ["17:00", "18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Sábado", horas: ["16:00", "17:30", "18:30", "20:00", "21:30", "23:00"] },
+      { dia: "Domingo", horas: ["8:30", "10:00", "11:00", "12:30", "14:00", "15:30", "17:00", "18:30", "20:00", "21:30", "23:00"] },
     ];
 
-    var seleccion = {}; // { "Lunes": [8, 9], ... }
-
-    // Experiencia con pádel (respuesta única)
-    var EXPERIENCIAS = [
-      "Nunca jugué",
-      "Jugué algunas veces",
-      "Juego seguido y busco mejorar",
-      "Tengo una categoría definida por torneo",
-    ];
-    var EXPERIENCIA_CON_CATEGORIA = "Tengo una categoría definida por torneo";
-    var experienciaSeleccionada = "";
-    var contExp = document.getElementById("experiencia");
-    EXPERIENCIAS.forEach(function (op) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "opt-chip";
-      chip.textContent = op;
-      chip.onclick = function () {
-        experienciaSeleccionada = op;
-        Array.prototype.forEach.call(contExp.children, function (c) { c.classList.remove("on"); });
-        chip.classList.add("on");
-        // el número de categoría solo se pide en la última opción
-        var wrap = document.getElementById("categoria-wrap");
-        wrap.className = op === EXPERIENCIA_CON_CATEGORIA ? "sub-input show" : "sub-input";
-        if (op !== EXPERIENCIA_CON_CATEGORIA) document.getElementById("categoria").value = "";
-      };
-      contExp.appendChild(chip);
-    });
-
-    // Tipo de clase que busca (multirespuesta)
-    var TIPOS_CLASE = ["Individual", "Doble", "Grupal"];
-    var tiposSeleccionados = [];
-    var contTipos = document.getElementById("tipos");
-    TIPOS_CLASE.forEach(function (t) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "hour-chip";
-      chip.textContent = t;
-      chip.onclick = function () {
-        var i = tiposSeleccionados.indexOf(t);
-        if (i >= 0) { tiposSeleccionados.splice(i, 1); chip.classList.remove("on"); }
-        else { tiposSeleccionados.push(t); chip.classList.add("on"); }
-      };
-      contTipos.appendChild(chip);
-    });
+    var seleccion = {}; // { "Lunes": ["18:30"], ... }
 
     var cont = document.getElementById("dias");
     DIAS.forEach(function (d) {
@@ -309,12 +231,17 @@
         var chip = document.createElement("button");
         chip.type = "button";
         chip.className = "hour-chip";
-        chip.textContent = h + ":00";
+        chip.textContent = h;
         chip.onclick = function () {
           var arr = seleccion[d.dia];
           var i = arr.indexOf(h);
           if (i >= 0) { arr.splice(i, 1); chip.classList.remove("on"); }
-          else { arr.push(h); arr.sort(function (a, b) { return a - b; }); chip.classList.add("on"); }
+          else {
+            arr.push(h);
+            // se ordenan según el orden original del día
+            arr.sort(function (a, b) { return d.horas.indexOf(a) - d.horas.indexOf(b); });
+            chip.classList.add("on");
+          }
           actualizar();
         };
         hours.appendChild(chip);
@@ -331,7 +258,7 @@
       var partes = [];
       DIAS.forEach(function (d) {
         if (seleccion[d.dia].length > 0) {
-          partes.push(d.dia + ": " + seleccion[d.dia].map(function (h) { return h + ":00"; }).join(", "));
+          partes.push(d.dia + ": " + seleccion[d.dia].join(", "));
         }
       });
       return partes;
@@ -347,7 +274,7 @@
       var partes = resumenTexto();
       document.getElementById("resumen").innerHTML = partes.length === 0
         ? "Todavía no marcaste ningún horario."
-        : "<strong>Tu disponibilidad:</strong><br>" + partes.join("<br>");
+        : "<strong>Horarios que buscás:</strong><br>" + partes.join("<br>");
     }
 
     function mostrarError(msg) {
@@ -363,46 +290,26 @@
       limpiarError();
       var nombre = document.getElementById("nombre").value.trim();
       var celular = document.getElementById("celular").value.trim();
-      var categoria = document.getElementById("categoria").value.trim();
       if (!nombre) { mostrarError("Poné tu nombre y apellido."); return null; }
       if (!celular) { mostrarError("Poné tu número de celular."); return null; }
-      if (!experienciaSeleccionada) { mostrarError("Contanos tu experiencia con el pádel."); return null; }
-      if (experienciaSeleccionada === EXPERIENCIA_CON_CATEGORIA) {
-        var num = parseInt(categoria, 10);
-        if (isNaN(num) || num < 4 || num > 9) { mostrarError("Poné tu categoría, del 4 al 9."); return null; }
-        categoria = String(num);
-      } else {
-        categoria = "";
-      }
-      if (tiposSeleccionados.length === 0) { mostrarError("Marcá qué tipo de clase buscás (podés elegir varias)."); return null; }
-      if (totalMarcados() === 0) { mostrarError("Marcá al menos un horario en el que puedas venir."); return null; }
+      if (totalMarcados() === 0) { mostrarError("Marcá al menos un horario que te sirva."); return null; }
 
       var disponibilidad = {};
       DIAS.forEach(function (d) {
         if (seleccion[d.dia].length > 0) disponibilidad[d.dia] = seleccion[d.dia];
       });
 
-      var experienciaTexto = experienciaSeleccionada + (categoria ? " (categoría " + categoria + ")" : "");
-
-      // Código para importar automáticamente en el CRM (Lista de Espera · Alumnos)
       var codigo = "PTC1:" + btoa(unescape(encodeURIComponent(JSON.stringify({
-        n: nombre, t: celular, c: tiposSeleccionados, d: disponibilidad,
-        e: experienciaSeleccionada, g: categoria
+        s: "Abono", n: nombre, t: celular, d: disponibilidad
       }))));
 
-      var mensaje = "Hola! Quiero anotarme en la lista de espera de clases de padel.\n"
+      var mensaje = "Hola! Quiero solicitar un abono de padel.\n"
         + "Nombre: " + nombre + "\n"
         + "Celular: " + celular + "\n"
-        + "Experiencia: " + experienciaTexto + "\n"
-        + "Tipo de clase: " + tiposSeleccionados.join(", ") + "\n"
-        + "Disponibilidad:\n- " + resumenTexto().join("\n- ")
+        + "Dias y horarios buscados:\n- " + resumenTexto().join("\n- ")
         + "\n\nCodigo de inscripcion (no lo borres):\n" + codigo;
 
-      return {
-        nombre: nombre, celular: celular, tipos: tiposSeleccionados.slice(),
-        disponibilidad: disponibilidad, experiencia: experienciaSeleccionada,
-        categoria: categoria, mensaje: mensaje
-      };
+      return { nombre: nombre, celular: celular, disponibilidad: disponibilidad, mensaje: mensaje };
     }
 
     function mostrarListo(texto) {
@@ -413,21 +320,18 @@
     }
 
     function enviarPorWhatsApp(datos) {
-      // si el número del profe todavía no está configurado, no abrimos un chat equivocado
       if (!TELEFONO_PROFE || TELEFONO_PROFE === "5491100000000") {
         copiarFallback(datos.mensaje);
         mostrarListo("¡Datos copiados! Pegalos en un WhatsApp al profe y te contactamos apenas haya lugar.");
         return;
       }
       window.open("https://wa.me/" + TELEFONO_PROFE + "?text=" + encodeURIComponent(datos.mensaje), "_blank");
-      mostrarListo("¡Listo! Se abrió WhatsApp con tu inscripción. Mandá el mensaje tal como está y te contactamos apenas haya lugar.");
+      mostrarListo("¡Listo! Se abrió WhatsApp con tu solicitud. Mandá el mensaje tal como está y te contactamos apenas haya lugar.");
     }
 
     document.getElementById("enviar").onclick = function () {
       var datos = armarDatos();
       if (!datos) return;
-      // La inscripción va directo a la base de datos;
-      // si por algún motivo falla, cae al circuito de WhatsApp.
       var boton = document.getElementById("enviar");
       boton.disabled = true;
       boton.textContent = "Enviando…";
@@ -440,19 +344,18 @@
           "Prefer": "return=minimal"
         },
         body: JSON.stringify({
-          seccion: "Alumnos",
-          nombre: datos.nombre, celular: datos.celular, tipos: datos.tipos,
-          disponibilidad: datos.disponibilidad,
-          experiencia: datos.experiencia, categoria: datos.categoria
+          seccion: "Abono",
+          nombre: datos.nombre, celular: datos.celular,
+          disponibilidad: datos.disponibilidad
         }),
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
-        mostrarListo("¡Listo! Tu inscripción fue enviada. Te contactamos apenas haya lugar.");
+        mostrarListo("¡Listo! Tu solicitud fue enviada. Te contactamos apenas haya lugar.");
       }).catch(function () {
         enviarPorWhatsApp(datos);
       }).finally(function () {
         boton.disabled = false;
-        boton.textContent = "Enviar inscripción";
+        boton.textContent = "Enviar solicitud";
       });
     };
 
@@ -461,9 +364,7 @@
       if (!datos) return;
       var mensaje = datos.mensaje;
       var fin = function () {
-        document.getElementById("done-text").textContent =
-          "¡Datos copiados! Pegalos en un WhatsApp al profe y te contactamos apenas haya lugar.";
-        document.getElementById("done").className = "done show";
+        mostrarListo("¡Datos copiados! Pegalos en un WhatsApp al profe y te contactamos apenas haya lugar.");
       };
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(mensaje).then(fin, function () { copiarFallback(mensaje); fin(); });
