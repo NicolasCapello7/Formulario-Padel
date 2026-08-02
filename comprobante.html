@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancha Uno — Subir comprobante de pago</title>
+  <style>
+    :root {
+      --court: #1B4F3C;
+      --court-light: #2F6B4F;
+      --court-soft: #E7EFE9;
+      --clay: #C2703F;
+      --sand: #F6F2E9;
+      --paper: #FFFFFF;
+      --ink: #22271F;
+      --slate: #6E7A6F;
+      --line: #DAD9C9;
+      --warn: #C24B3A;
+      --warn-soft: #F7E2DD;
+      --ok: #2F7A4F;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--sand);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--court);
+      color: #fff;
+      border-bottom: 4px solid var(--clay);
+      padding: 22px 18px;
+      text-align: center;
+    }
+    .header h1 { font-size: 22px; letter-spacing: 0.3px; }
+    .header p {
+      font-size: 12px; color: #C9D8CE;
+      text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px 60px; }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+    }
+    .intro { font-size: 13.5px; color: var(--slate); line-height: 1.5; margin-bottom: 16px; }
+    .intro strong { color: var(--ink); }
+    label.field-label {
+      display: block;
+      font-size: 11.5px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--slate);
+      margin-bottom: 6px;
+    }
+    .upload-box {
+      border: 2px dashed var(--line);
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+    .upload-box.has-file { border-color: var(--court); border-style: solid; padding: 12px; }
+    .upload-box .icon { font-size: 30px; margin-bottom: 6px; }
+    .upload-box .label { font-size: 13.5px; font-weight: 700; color: var(--court); }
+    .upload-box .sub { font-size: 12px; color: var(--slate); margin-top: 4px; }
+    #preview {
+      display: none;
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      margin: 0 auto;
+    }
+    #fileInput { display: none; }
+    .error {
+      display: none;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: 13px; font-weight: 700;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .error.show { display: block; }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: inherit;
+      padding: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:disabled { opacity: 0.6; cursor: default; }
+    .btn-primary { background: var(--court); color: #fff; }
+    .btn-primary:active { background: var(--court-light); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--court);
+      border: 1.5px dashed var(--line);
+      margin-top: 10px;
+      font-size: 13.5px;
+      padding: 11px;
+    }
+    .done {
+      display: none;
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+    .done.show { display: block; }
+    .done .big { font-size: 38px; }
+    .done p { font-size: 14px; color: var(--slate); margin-top: 8px; line-height: 1.5; }
+    .footer { text-align: center; font-size: 11.5px; color: var(--slate); margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎾 Cancha Uno</h1>
+    <p>Comprobante de pago</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="tarjetaValida">
+      <div id="contenido">
+        <p class="intro" id="intro">Cargando…</p>
+
+        <label class="field-label">Foto del comprobante</label>
+        <div class="upload-box" id="uploadBox">
+          <img id="preview" alt="Vista previa del comprobante" />
+          <div id="uploadPrompt">
+            <div class="icon">📎</div>
+            <div class="label">Tocá para elegir o sacar una foto</div>
+            <div class="sub">JPG o PNG, hasta 10 MB</div>
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" />
+
+        <div class="error" id="error"></div>
+
+        <button class="btn btn-primary" id="enviar">Enviar comprobante</button>
+      </div>
+
+      <div class="done" id="done">
+        <div class="big">✅</div>
+        <p id="done-text">¡Listo! Tu comprobante fue enviado.</p>
+      </div>
+    </div>
+
+    <div class="card" id="tarjetaInvalida" style="display: none;">
+      <p class="intro" style="margin-bottom: 0;">
+        Este link no es válido. Pedile al profe que te mande tu link personal de comprobantes.
+      </p>
+    </div>
+
+    <p class="footer">Cancha Uno · Administración de clases</p>
+  </div>
+
+  <script>
+    // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
+    var TELEFONO_PROFE = "5491100000000";
+
+    // Base de datos en la nube (Supabase). La anon key es pública por diseño:
+    // solo permite SUBIR comprobantes, no leer ni tocar ningún dato ajeno.
+    var SUPA_URL = "https://yhmtbvkpjadsvcdziegx.supabase.co";
+    var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4";
+
+    var params = new URLSearchParams(window.location.search);
+    var studentId = params.get("id");
+    var studentName = params.get("n") || "";
+
+    if (!studentId) {
+      document.getElementById("tarjetaValida").style.display = "none";
+      document.getElementById("tarjetaInvalida").style.display = "block";
+      throw new Error("link sin id");
+    }
+
+    function monthKeyNow() {
+      var d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    }
+    function monthLabelNow() {
+      var d = new Date();
+      var s = d.toLocaleDateString("es-AR", { month: "long", year: "numeric" });
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    document.getElementById("intro").innerHTML =
+      "¡Hola" + (studentName ? " <strong>" + studentName + "</strong>" : "") + "! "
+      + "Subí acá la foto del comprobante de tu transferencia de <strong>" + monthLabelNow() + "</strong>.";
+
+    var archivoElegido = null;
+    var fileInput = document.getElementById("fileInput");
+    var uploadBox = document.getElementById("uploadBox");
+    var preview = document.getElementById("preview");
+    var uploadPrompt = document.getElementById("uploadPrompt");
+
+    uploadBox.onclick = function () { fileInput.click(); };
+
+    fileInput.onchange = function () {
+      limpiarError();
+      var f = fileInput.files[0];
+      if (!f) return;
+      if (f.type.indexOf("image/") !== 0) { mostrarError("Elegí una imagen (foto o captura de pantalla)."); return; }
+      if (f.size > 10 * 1024 * 1024) { mostrarError("La imagen pesa demasiado (máximo 10 MB)."); return; }
+      archivoElegido = f;
+      preview.src = URL.createObjectURL(f);
+      preview.style.display = "block";
+      uploadPrompt.style.display = "none";
+      uploadBox.className = "upload-box has-file";
+    };
+
+    function mostrarError(msg) {
+      var e = document.getElementById("error");
+      e.textContent = msg;
+      e.className = "error show";
+    }
+    function limpiarError() {
+      document.getElementById("error").className = "error";
+    }
+    function mostrarListo(texto) {
+      document.getElementById("contenido").style.display = "none";
+      document.getElementById("done-text").textContent = texto;
+      document.getElementById("done").className = "done show";
+    }
+
+    function extensionDe(tipo) {
+      if (tipo === "image/png") return "png";
+      if (tipo === "image/webp") return "webp";
+      if (tipo === "image/heic" || tipo === "image/heif") return "heic";
+      return "jpg";
+    }
+
+    function mostrarErrorEnvio() {
+      var msgWa = "Hola! Quiero mandarte mi comprobante de pago de " + monthLabelNow()
+        + " pero no lo pude subir desde la web. Te lo mando por acá.";
+      var contenedor = document.getElementById("error");
+      contenedor.innerHTML = "No se pudo enviar el comprobante. Revisá tu conexión y probá de nuevo, "
+        + "o mandaselo directo al profe por WhatsApp."
+        + (TELEFONO_PROFE && TELEFONO_PROFE !== "5491100000000"
+          ? ' <a href="https://wa.me/' + TELEFONO_PROFE + '?text=' + encodeURIComponent(msgWa) + '" target="_blank" style="color: inherit; text-decoration: underline;">Abrir WhatsApp</a>'
+          : "");
+      contenedor.className = "error show";
+    }
+
+    document.getElementById("enviar").onclick = function () {
+      limpiarError();
+      if (!archivoElegido) { mostrarError("Elegí primero la foto del comprobante."); return; }
+
+      var boton = document.getElementById("enviar");
+      boton.disabled = true;
+      boton.textContent = "Enviando…";
+
+      var path = studentId + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + extensionDe(archivoElegido.type);
+
+      fetch(SUPA_URL + "/storage/v1/object/comprobantes/" + path, {
+        method: "POST",
+        headers: {
+          "apikey": SUPA_KEY,
+          "Authorization": "Bearer " + SUPA_KEY,
+          "Content-Type": archivoElegido.type,
+        },
+        body: archivoElegido,
+      }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status + " al subir la imagen");
+        return fetch(SUPA_URL + "/rest/v1/comprobantes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPA_KEY,
+            "Authorization": "Bearer " + SUPA_KEY,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            student_id: studentId,
+            student_name: studentName,
+            mes: monthKeyNow(),
+            imagen_path: path,
+          }),
+        });
+      }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status + " al registrar el comprobante");
+        mostrarListo("¡Listo! Tu comprobante de " + monthLabelNow() + " fue enviado. Gracias!");
+      }).catch(function () {
+        mostrarErrorEnvio();
+      }).finally(function () {
+        boton.disabled = false;
+        boton.textContent = "Enviar comprobante";
+      });
+    };
+  </script>
+</body>
+</html>
