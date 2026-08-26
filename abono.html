@@ -190,14 +190,13 @@
     <p class="footer">Cancha Uno · Administración de clases</p>
   </div>
 
+  <script src="config.js"></script>
   <script>
-    // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
-    var TELEFONO_PROFE = "5491100000000";
-
-    // Base de datos en la nube (Supabase). La anon key es pública por diseño:
-    // solo permite ENVIAR inscripciones, no leer ni tocar ningún dato.
-    var SUPA_URL = "https://yhmtbvkpjadsvcdziegx.supabase.co";
-    var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4";
+    // Teléfono y credenciales de Supabase salen de config.js (un solo
+    // lugar para rotarlos en vez de repetirlos en cada formulario).
+    var TELEFONO_PROFE = window.APP_CONFIG.TELEFONO_PROFE;
+    var SUPA_URL = window.APP_CONFIG.SUPA_URL;
+    var SUPA_KEY = window.APP_CONFIG.SUPA_KEY;
 
     // Días y horarios de los abonos
     var DIAS = [

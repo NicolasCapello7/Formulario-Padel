@@ -161,14 +161,13 @@
     <p class="footer">Cancha Uno · Administración de clases</p>
   </div>
 
+  <script src="config.js"></script>
   <script>
-    // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
-    var TELEFONO_PROFE = "5491100000000";
-
-    // Base de datos en la nube (Supabase). La anon key es pública por diseño:
-    // solo permite SUBIR comprobantes, no leer ni tocar ningún dato ajeno.
-    var SUPA_URL = "https://yhmtbvkpjadsvcdziegx.supabase.co";
-    var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4";
+    // Teléfono y credenciales de Supabase salen de config.js (un solo
+    // lugar para rotarlos en vez de repetirlos en cada formulario).
+    var TELEFONO_PROFE = window.APP_CONFIG.TELEFONO_PROFE;
+    var SUPA_URL = window.APP_CONFIG.SUPA_URL;
+    var SUPA_KEY = window.APP_CONFIG.SUPA_KEY;
 
     var params = new URLSearchParams(window.location.search);
     var studentId = params.get("id");
@@ -203,9 +202,23 @@
       return monthLabelFor(monthKeyToUse());
     }
 
-    document.getElementById("intro").innerHTML =
-      "¡Hola" + (studentName ? " <strong>" + studentName + "</strong>" : "") + "! "
-      + "Subí acá la foto del comprobante de tu transferencia de <strong>" + monthLabelNow() + "</strong>.";
+    // Se arma con nodos de texto (no innerHTML) porque studentName viene
+    // crudo de la URL (?n=...): si se lo mete en innerHTML como string,
+    // alguien podría mandar un link con HTML/script en el nombre y
+    // ejecutarlo en el navegador de quien lo abre (XSS reflejado).
+    var intro = document.getElementById("intro");
+    intro.textContent = "¡Hola";
+    if (studentName) {
+      intro.appendChild(document.createTextNode(" "));
+      var nombreEl = document.createElement("strong");
+      nombreEl.textContent = studentName;
+      intro.appendChild(nombreEl);
+    }
+    intro.appendChild(document.createTextNode("! Subí acá la foto del comprobante de tu transferencia de "));
+    var mesEl = document.createElement("strong");
+    mesEl.textContent = monthLabelNow();
+    intro.appendChild(mesEl);
+    intro.appendChild(document.createTextNode("."));
 
     var archivoElegido = null;
     var fileInput = document.getElementById("fileInput");
