@@ -126,6 +126,7 @@
     var params = new URLSearchParams(window.location.search);
     var studentId = params.get("id");
     var studentName = params.get("n") || "";
+    var mesParam = params.get("m") || ""; // "YYYY-MM" del mes que se está cobrando (viene del mensaje que mandó el profe)
 
     if (!studentId) {
       document.getElementById("tarjetaValida").style.display = "none";
@@ -137,10 +138,22 @@
       var d = new Date();
       return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
     }
-    function monthLabelNow() {
-      var d = new Date();
+    // Si el link trae "m" (mensaje mandado con el mes correspondiente ya
+    // resuelto, por ejemplo se mandó el cobro de septiembre a fin de agosto),
+    // se usa ese mes en vez del mes calendario del día en que se abre el
+    // link — si no, la confirmación quedaría cargada en el mes equivocado.
+    // Los links viejos sin "m" siguen cayendo en el mes calendario actual.
+    function monthKeyToUse() {
+      return /^\d{4}-\d{2}$/.test(mesParam) ? mesParam : monthKeyNow();
+    }
+    function monthLabelFor(monthKey) {
+      var partes = monthKey.split("-");
+      var d = new Date(Number(partes[0]), Number(partes[1]) - 1, 1);
       var s = d.toLocaleDateString("es-AR", { month: "long", year: "numeric" });
       return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+    function monthLabelNow() {
+      return monthLabelFor(monthKeyToUse());
     }
 
     document.getElementById("intro").innerHTML =
@@ -189,7 +202,7 @@
         body: JSON.stringify({
           student_id: studentId,
           student_name: studentName,
-          mes: monthKeyNow(),
+          mes: monthKeyToUse(),
         }),
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status + " al registrar la confirmación");
