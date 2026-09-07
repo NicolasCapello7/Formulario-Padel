@@ -19,16 +19,16 @@
       <div id="contenido">
         <p class="intro" id="intro">Cargando…</p>
 
-        <label class="field-label">Foto(s) del comprobante</label>
+        <label class="field-label">Foto(s) o PDF del comprobante</label>
         <div class="upload-box" id="uploadBox">
           <div id="uploadPrompt">
             <div class="icon">📎</div>
-            <div class="label" id="uploadLabel">Tocá para elegir una o más fotos</div>
-            <div class="sub">JPG o PNG, hasta 10 MB cada una</div>
+            <div class="label" id="uploadLabel">Tocá para elegir una o más fotos, o un PDF</div>
+            <div class="sub">JPG, PNG o PDF, hasta 10 MB cada uno</div>
           </div>
         </div>
         <div class="previews" id="previews"></div>
-        <input type="file" id="fileInput" accept="image/*" multiple />
+        <input type="file" id="fileInput" accept="image/*,application/pdf" multiple />
 
         <div class="error" id="error"></div>
 
@@ -124,8 +124,8 @@
     fileInput.onchange = function () {
       limpiarError();
       Array.prototype.forEach.call(fileInput.files, function (f) {
-        if (f.type.indexOf("image/") !== 0) { mostrarError("Elegí solo imágenes (foto o captura de pantalla)."); return; }
-        if (f.size > 10 * 1024 * 1024) { mostrarError("Una de las imágenes pesa demasiado (máximo 10 MB)."); return; }
+        if (f.type.indexOf("image/") !== 0 && f.type !== "application/pdf") { mostrarError("Elegí solo imágenes (foto o captura de pantalla) o un PDF."); return; }
+        if (f.size > 10 * 1024 * 1024) { mostrarError("Uno de los archivos pesa demasiado (máximo 10 MB)."); return; }
         archivosElegidos.push(f);
       });
       fileInput.value = ""; // permite volver a elegir el mismo archivo si se lo saca y se lo quiere sumar de nuevo
@@ -137,9 +137,23 @@
       archivosElegidos.forEach(function (f, i) {
         var item = document.createElement("div");
         item.className = "preview-item";
-        var img = document.createElement("img");
-        img.src = URL.createObjectURL(f);
-        img.alt = "Comprobante " + (i + 1);
+        if (f.type === "application/pdf") {
+          var pdfBox = document.createElement("div");
+          pdfBox.className = "pdf-placeholder";
+          var pdfIcon = document.createElement("div");
+          pdfIcon.className = "icon";
+          pdfIcon.textContent = "📄";
+          var pdfLabel = document.createElement("div");
+          pdfLabel.textContent = "PDF";
+          pdfBox.appendChild(pdfIcon);
+          pdfBox.appendChild(pdfLabel);
+          item.appendChild(pdfBox);
+        } else {
+          var img = document.createElement("img");
+          img.src = URL.createObjectURL(f);
+          img.alt = "Comprobante " + (i + 1);
+          item.appendChild(img);
+        }
         var quitar = document.createElement("button");
         quitar.type = "button";
         quitar.className = "quitar";
@@ -150,12 +164,11 @@
           archivosElegidos.splice(i, 1);
           renderPreviews();
         };
-        item.appendChild(img);
         item.appendChild(quitar);
         previewsCont.appendChild(item);
       });
       uploadBox.className = archivosElegidos.length > 0 ? "upload-box has-file" : "upload-box";
-      uploadLabel.textContent = archivosElegidos.length > 0 ? "Tocá para agregar otra foto" : "Tocá para elegir una o más fotos";
+      uploadLabel.textContent = archivosElegidos.length > 0 ? "Tocá para agregar otra foto o PDF" : "Tocá para elegir una o más fotos, o un PDF";
     }
 
     function mostrarError(msg) {
@@ -176,6 +189,7 @@
       if (tipo === "image/png") return "png";
       if (tipo === "image/webp") return "webp";
       if (tipo === "image/heic" || tipo === "image/heif") return "heic";
+      if (tipo === "application/pdf") return "pdf";
       return "jpg";
     }
 
@@ -193,7 +207,7 @@
 
     document.getElementById("enviar").onclick = function () {
       limpiarError();
-      if (archivosElegidos.length === 0) { mostrarError("Elegí al menos una foto del comprobante."); return; }
+      if (archivosElegidos.length === 0) { mostrarError("Elegí al menos una foto o un PDF del comprobante."); return; }
 
       var boton = document.getElementById("enviar");
       boton.disabled = true;
