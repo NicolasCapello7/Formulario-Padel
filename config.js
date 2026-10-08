@@ -9,8 +9,8 @@
 // diseñada para ser pública: lo que protege los datos son las políticas RLS
 // del lado del servidor (ver supabase.sql), no que esta key esté escondida.
 window.APP_CONFIG = {
-  SUPA_URL: "https://yhmtbvkpjadsvcdziegx.supabase.co",
-  SUPA_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobXRidmtwamFkc3ZjZHppZWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNjgwNTAsImV4cCI6MjA5OTg0NDA1MH0.koAPJeVAkugiPz9yT_eg3wWqUe9NtbkU-2Yw_wt-3m4",
+  SUPA_URL: "https://enaaavopnuwfmzqmaymf.supabase.co",
+  SUPA_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuYWFhdm9wbnV3Zm16cW1heW1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MjcxNzQsImV4cCI6MjEwNzAwMzE3NH0.W84Eof_1WVRl__s6fflu4nThJgcmNzFiCrq917qjwII",
   // ⚠️ CAMBIAR ACÁ: número de WhatsApp del profe, con código de país y solo dígitos.
   TELEFONO_PROFE: "5491100000000",
 };
