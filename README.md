@@ -10,7 +10,7 @@ Formularios públicos para anotarse en las listas de espera del club:
 - [confirmar.html](confirmar.html) — confirmar el lugar del mes (link personal por alumno, `?id=...&n=...`)
 
 Este repo solo contiene los formularios; el sistema de administración es privado.
-Cada push a `main` se publica automáticamente en GitHub Pages (ver `.github/workflows/pages.yml`) — eso es **producción**, los alumnos ya tienen esos links mandados.
+Cada push a `main` se publica automáticamente en GitHub Pages (ver `.github/workflows/pages.yml`) y también en Cloudflare Pages (**https://formulario-padel.pages.dev**) — eso es **producción**. Los links que genera el CRM usan la dirección de Cloudflare; los que los alumnos ya tienen mandados con la de GitHub siguen funcionando mientras ese sitio siga publicado.
 
 ## Probar cambios sin tocar producción
 
