@@ -5,6 +5,7 @@ Formularios públicos para anotarse en las listas de espera del club:
 - [index.html](index.html) — clases de pádel (adultos)
 - [academia.html](academia.html) — academia de chicos
 - [abono.html](abono.html) — abonos
+- [torneo.html](torneo.html) — inscripción de equipos al torneo (llega al CRM en Torneo → Inscripciones, con aviso en la campanita)
 - [comprobante.html](comprobante.html) — subir foto de comprobante de pago (link personal por alumno, `?id=...&n=...`)
 - [confirmar.html](confirmar.html) — confirmar el lugar del mes (link personal por alumno, `?id=...&n=...`)
 
