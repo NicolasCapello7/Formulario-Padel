@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TREINA PADEL — Inscripción al Torneo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="stripes"></div>
+  <div class="header">
+    <div class="brand">TREINA</div>
+    <div class="brand-sub">PADEL</div>
+    <p>Inscripción · Torneo de Pádel Damas D8/9</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div id="contenido">
+        <p class="intro">
+          ¡Bienvenidas a TREINA! Completá los datos del equipo, leé el compromiso de
+          participación y aceptalo para enviar la inscripción.
+        </p>
+
+        <label class="field-label" for="equipo">Nombre del equipo</label>
+        <input type="text" id="equipo" placeholder="Ej: Las Cracks" maxlength="80" />
+
+        <label class="field-label" for="integrante1">Integrantes</label>
+        <input type="text" id="integrante1" placeholder="Integrante 1 · Nombre y apellido" autocomplete="name" maxlength="80" />
+        <input type="text" id="integrante2" placeholder="Integrante 2 · Nombre y apellido" maxlength="80" style="margin-top: -6px;" />
+        <input type="text" id="integrante3" placeholder="Integrante 3 (opcional) · Nombre y apellido" maxlength="80" style="margin-top: -6px;" />
+        <p class="hint">Los equipos pueden ser de dos o tres jugadoras.</p>
+
+        <label class="field-label" for="celular">Celular de contacto (WhatsApp)</label>
+        <input type="tel" id="celular" placeholder="Ej: 11 2233 4455" autocomplete="tel" maxlength="30" />
+        <p class="hint">Con tu código de área, sin 0 ni 15.</p>
+
+        <label class="field-label">Compromiso de participación</label>
+        <div class="doc" id="compromiso" tabindex="0">
+          <h3>Compromiso de participación</h3>
+          <h4>Torneo de Pádel Damas D8/9</h4>
+
+          <p>¡Bienvenidas a TREINA!</p>
+          <p>Nos alegra mucho que formen parte de este torneo. Queremos que sea una experiencia en la que puedan competir, disfrutar, conocer nuevas compañeras y, sobre todo, compartir la pasión por el pádel.</p>
+          <p>El presente compromiso tiene como objetivo establecer algunas pautas básicas para que el torneo se desarrolle de la mejor manera, cuidando la organización, el tiempo y las ganas de jugar de todas las participantes.</p>
+
+          <h4>1. Compromiso de participación</h4>
+          <p>Al inscribirse y abonar el valor correspondiente, cada equipo asume el compromiso de participar y presentarse a los partidos programados, respetando la organización y el desarrollo del torneo.</p>
+          <p>La inscripción representa no solo un lugar en la competencia, sino también el compromiso con las demás jugadoras, para que todas puedan disfrutar de los encuentros previstos.</p>
+
+          <h4>2. Integración de los equipos y continuidad de juego</h4>
+          <p>Los equipos podrán estar conformados por dos o tres jugadoras. Esta posibilidad busca brindar mayor flexibilidad ante cualquier imprevisto y facilitar que los partidos puedan disputarse con normalidad.</p>
+          <p>Por eso, les pedimos que, en la medida de lo posible, se organicen con anticipación y contemplen alternativas ante eventuales ausencias, procurando que el equipo pueda presentarse y que ninguna jugadora se quede sin jugar por falta de compañeras.</p>
+          <p>El objetivo es que todas puedan completar sus partidos y que el compromiso asumido al inscribirse se mantenga durante todo el torneo.</p>
+
+          <h4>3. Partidos de las instancias finales</h4>
+          <p>La inscripción incluye los tres partidos garantizados correspondientes a la fase de zonas.</p>
+          <p>En caso de clasificar a las instancias eliminatorias —cuartos de final, semifinal y/o final—, cada partido tendrá un costo adicional de $50.000 por equipo, que deberá abonarse para disputar el encuentro correspondiente.</p>
+
+          <h4>4. Compromiso con el torneo y con las demás jugadoras</h4>
+          <p>Entendemos que pueden surgir imprevistos, pero les pedimos responsabilidad, comunicación y buena predisposición ante cualquier situación que pueda afectar su participación.</p>
+          <p>El compromiso de cada equipo es fundamental para respetar a las rivales, facilitar la organización y garantizar que todas tengan la oportunidad de jugar y disfrutar de la experiencia.</p>
+          <p>También les pedimos que se presenten 15 minutos antes de las cita prevista. En el lugar contaremos con snacks saludables y bebidas para hidratarse y si quieren venir a pasar el día con nosotros.</p>
+
+          <h4>Nuestro espíritu TREINA</h4>
+          <p>Más allá de los resultados, queremos construir algo que vaya más allá de un torneo: una comunidad de mujeres que compartan el deporte, se diviertan, compitan sanamente y tengan ganas de volver a encontrarse en la cancha.</p>
+          <p>Estamos muy contentos de recibirlas, tenemos muchas ganas de verlas jugar y esperamos que esta sea la primera de muchas experiencias compartidas.</p>
+          <p>¡Gracias por confiar en TREINA y ser parte de esta propuesta!</p>
+        </div>
+
+        <h3 class="sub-title">Conformidad</h3>
+        <label class="check-row" for="acepto">
+          <input type="checkbox" id="acepto" />
+          <span>Las integrantes manifiestan conocer y aceptar las condiciones de participación detalladas en este compromiso.</span>
+        </label>
+
+        <label class="field-label" for="aclaracion">Aclaración</label>
+        <input type="text" id="aclaracion" placeholder="Nombre y apellido de quien completa" maxlength="80" />
+        <p class="hint">Fecha de la conformidad: <strong id="fecha"></strong></p>
+
+        <div class="error" id="error"></div>
+
+        <button class="btn btn-primary" id="enviar">Enviar inscripción</button>
+        <button class="btn btn-ghost" id="copiar">O copiá tus datos para mandarlos vos</button>
+      </div>
+
+      <div class="done" id="done">
+        <div class="big">✅</div>
+        <p id="done-text">¡Listo! Recibimos la inscripción de tu equipo.</p>
+      </div>
+    </div>
+
+    <p class="footer">TREINA PADEL · Torneo</p>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    // Teléfono y credenciales de Supabase salen de config.js (un solo
+    // lugar para rotarlos en vez de repetirlos en cada formulario).
+    var TELEFONO_PROFE = window.APP_CONFIG.TELEFONO_PROFE;
+    var SUPA_URL = window.APP_CONFIG.SUPA_URL;
+    var SUPA_KEY = window.APP_CONFIG.SUPA_KEY;
+
+    // Si se cambia el texto del compromiso, subir este número: queda guardado
+    // en cada inscripción para saber qué versión aceptó cada equipo.
+    var COMPROMISO_VERSION = "Damas D8/9 · v1";
+
+    var hoy = new Date();
+    document.getElementById("fecha").textContent = hoy.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+
+    function mostrarError(msg) {
+      var e = document.getElementById("error");
+      e.textContent = msg;
+      e.className = "error show";
+    }
+    function limpiarError() {
+      document.getElementById("error").className = "error";
+    }
+    function valor(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function armarDatos() {
+      limpiarError();
+      var equipo = valor("equipo");
+      var integrantes = [valor("integrante1"), valor("integrante2"), valor("integrante3")].filter(Boolean);
+      var celular = valor("celular");
+      var aclaracion = valor("aclaracion");
+      if (!equipo) { mostrarError("Poné el nombre del equipo."); return null; }
+      if (!valor("integrante1") || !valor("integrante2")) { mostrarError("Poné el nombre y apellido de al menos dos integrantes."); return null; }
+      if (!celular) { mostrarError("Poné un número de celular de contacto."); return null; }
+      if (!document.getElementById("acepto").checked) { mostrarError("Para inscribirse hay que aceptar el compromiso de participación."); return null; }
+      if (!aclaracion) { mostrarError("Poné la aclaración: nombre y apellido de quien completa la inscripción."); return null; }
+
+      var mensaje = "Hola! Quiero inscribir a mi equipo en el Torneo de Padel Damas D8/9.\n"
+        + "Equipo: " + equipo + "\n"
+        + "Integrantes: " + integrantes.join(", ") + "\n"
+        + "Celular: " + celular + "\n"
+        + "Acepto el compromiso de participacion (" + COMPROMISO_VERSION + ").\n"
+        + "Aclaracion: " + aclaracion + "\n"
+        + "Fecha: " + hoy.toLocaleDateString("es-AR");
+
+      return { equipo: equipo, integrantes: integrantes, celular: celular, aclaracion: aclaracion, mensaje: mensaje };
+    }
+
+    function mostrarListo(texto) {
+      // se oculta todo el formulario y queda solo la confirmación
+      document.getElementById("contenido").style.display = "none";
+      document.getElementById("done-text").textContent = texto;
+      document.getElementById("done").className = "done show";
+    }
+
+    function copiarFallback(texto) {
+      var ta = document.createElement("textarea");
+      ta.value = texto;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    function enviarPorWhatsApp(datos) {
+      if (!TELEFONO_PROFE || TELEFONO_PROFE === "5491100000000") {
+        copiarFallback(datos.mensaje);
+        mostrarListo("¡Datos copiados! Pegalos en un WhatsApp a TREINA para completar la inscripción.");
+        return;
+      }
+      window.open("https://wa.me/" + TELEFONO_PROFE + "?text=" + encodeURIComponent(datos.mensaje), "_blank");
+      mostrarListo("¡Listo! Se abrió WhatsApp con tu inscripción. Mandá el mensaje tal como está para completarla.");
+    }
+
+    document.getElementById("enviar").onclick = function () {
+      var datos = armarDatos();
+      if (!datos) return;
+      var boton = document.getElementById("enviar");
+      boton.disabled = true;
+      boton.textContent = "Enviando…";
+      fetch(SUPA_URL + "/rest/v1/torneo_inscripciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPA_KEY,
+          "Authorization": "Bearer " + SUPA_KEY,
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({
+          equipo: datos.equipo,
+          integrantes: datos.integrantes,
+          celular: datos.celular,
+          aclaracion: datos.aclaracion,
+          acepto_compromiso: true,
+          compromiso_version: COMPROMISO_VERSION
+        }),
+      }).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        mostrarListo("¡Listo! Recibimos la inscripción de " + datos.equipo + ". Te vamos a contactar al celular que dejaste.");
+      }).catch(function () {
+        enviarPorWhatsApp(datos);
+      }).finally(function () {
+        boton.disabled = false;
+        boton.textContent = "Enviar inscripción";
+      });
+    };
+
+    document.getElementById("copiar").onclick = function () {
+      var datos = armarDatos();
+      if (!datos) return;
+      var fin = function () {
+        mostrarListo("¡Datos copiados! Pegalos en un WhatsApp a TREINA para completar la inscripción.");
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(datos.mensaje).then(fin, function () { copiarFallback(datos.mensaje); fin(); });
+      } else {
+        copiarFallback(datos.mensaje);
+        fin();
+      }
+    };
+  </script>
+</body>
+</html>
