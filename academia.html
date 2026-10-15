@@ -25,6 +25,9 @@
         <label class="field-label" for="nombre">Nombre y Apellido del Niño/a</label>
         <input type="text" id="nombre" placeholder="Ej: Martina Pérez" />
 
+        <label class="field-label" for="edad">Edad del Niño/a</label>
+        <input type="number" id="edad" inputmode="numeric" min="3" max="18" step="1" placeholder="Ej: 9" />
+
         <label class="field-label" for="padre">Nombre y Apellido de Padre/Madre</label>
         <input type="text" id="padre" placeholder="Ej: Laura Pérez" autocomplete="name" />
 
@@ -120,9 +123,12 @@
     function armarDatos() {
       limpiarError();
       var nombre = document.getElementById("nombre").value.trim();
+      var edadTexto = document.getElementById("edad").value.trim();
       var padre = document.getElementById("padre").value.trim();
       var celular = document.getElementById("celular").value.trim();
       if (!nombre) { mostrarError("Poné el nombre y apellido del chico o la chica."); return null; }
+      var edad = /^\d{1,2}$/.test(edadTexto) ? parseInt(edadTexto, 10) : NaN;
+      if (isNaN(edad) || edad < 3 || edad > 18) { mostrarError("Poné la edad del chico o la chica (entre 3 y 18 años)."); return null; }
       if (!padre) { mostrarError("Poné el nombre y apellido del padre o la madre."); return null; }
       if (!celular) { mostrarError("Poné el número de celular."); return null; }
       if (!experienciaSeleccionada) { mostrarError("Contanos si ya tomó clases o no."); return null; }
@@ -134,11 +140,12 @@
       sel.forEach(function (d) { disponibilidad[d] = []; });
 
       var codigo = "PTC1:" + btoa(unescape(encodeURIComponent(JSON.stringify({
-        s: "Academia", n: nombre, p: padre, t: celular, e: experienciaSeleccionada, d: disponibilidad
+        s: "Academia", n: nombre, a: edad, p: padre, t: celular, e: experienciaSeleccionada, d: disponibilidad
       }))));
 
       var mensaje = "Hola! Quiero anotar a un chico/a en la academia de padel.\n"
         + "Nombre del niño/a: " + nombre + "\n"
+        + "Edad del niño/a: " + edad + "\n"
         + "Nombre del padre/madre: " + padre + "\n"
         + "Celular: " + celular + "\n"
         + "Experiencia: " + experienciaSeleccionada + "\n"
@@ -146,7 +153,7 @@
         + "\n\nCodigo de inscripcion (no lo borres):\n" + codigo;
 
       return {
-        nombre: nombre, padre: padre, celular: celular,
+        nombre: nombre, edad: edad, padre: padre, celular: celular,
         experiencia: experienciaSeleccionada, disponibilidad: disponibilidad, mensaje: mensaje
       };
     }
@@ -174,19 +181,37 @@
       var boton = document.getElementById("enviar");
       boton.disabled = true;
       boton.textContent = "Enviando…";
-      fetch(SUPA_URL + "/rest/v1/inscripciones", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPA_KEY,
-          "Authorization": "Bearer " + SUPA_KEY,
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-          seccion: "Academia",
-          nombre: datos.nombre, padre: datos.padre, celular: datos.celular,
-          experiencia: datos.experiencia, disponibilidad: datos.disponibilidad
-        }),
+      function enviar(cuerpo) {
+        return fetch(SUPA_URL + "/rest/v1/inscripciones", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPA_KEY,
+            "Authorization": "Bearer " + SUPA_KEY,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify(cuerpo),
+        });
+      }
+      enviar({
+        seccion: "Academia",
+        nombre: datos.nombre, edad: datos.edad, padre: datos.padre, celular: datos.celular,
+        experiencia: datos.experiencia, disponibilidad: datos.disponibilidad
+      }).then(function (res) {
+        if (res.ok) return res;
+        // Si la base todavía no tiene la columna "edad" (ver supabase.sql), la
+        // inscripción no se pierde: se reenvía con la edad dentro de "experiencia".
+        return res.text().then(function (texto) {
+          if (res.status === 400 && /edad/i.test(texto)) {
+            return enviar({
+              seccion: "Academia",
+              nombre: datos.nombre, padre: datos.padre, celular: datos.celular,
+              experiencia: datos.experiencia + " · Edad: " + datos.edad + " años",
+              disponibilidad: datos.disponibilidad
+            });
+          }
+          return res;
+        });
       }).then(function (res) {
         if (!res.ok) throw new Error("HTTP " + res.status);
         mostrarListo("¡Listo! Tu inscripción fue enviada. Te contactamos apenas haya lugar.");
